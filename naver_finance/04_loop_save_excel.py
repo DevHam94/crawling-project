@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
+import openpyxl
 
 def crawl(code):
     url = f"https://finance.naver.com/item/main.naver?code={code}"
@@ -22,7 +24,17 @@ def crawl(code):
     dic = {"price":price, "name":name, "code":code, "volume":volume}
     return dic
 
-dic = crawl("035720")
-print(dic)
+codes = ["035720", "005930", "051910", "000660"]
+# dic = crawl("035720")
+
+r = []
+for code in codes:
+    dic = crawl(code)
+    r.append(dic)
+# print(r)
+
+df = pd.DataFrame(r)
+df.to_excel("prices.xlsx")
+
 
 
