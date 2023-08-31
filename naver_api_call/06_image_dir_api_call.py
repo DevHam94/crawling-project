@@ -1,3 +1,5 @@
+import os.path
+
 import requests
 
 from urllib.request import Request, urlopen
@@ -36,14 +38,19 @@ class NaverSearchApi():
             result += r['items']
         return result
 
-    def save_images(self, r):
+    def save_images(self, path, r):
+        if not os.path.exists(path):
+            os.mkdir(path)
         cnt = 0
         for img in r:
-            image_url = r[0]['link']
-            image_byte = Request(image_url, headers={'User-Agent': 'Mozilla/5.0'})
-            f = open(f'{cnt}.jpg', 'wb')
-            f.write(urlopen(image_byte).read())
-            f.close()
+            try:
+                image_url = r[0]['link']
+                image_byte = Request(image_url, headers={'User-Agent': 'Mozilla/5.0'})
+                f = open(f'{cnt}.jpg', 'wb')
+                f.write(urlopen(image_byte).read())
+                f.close()
+            except Exception as e:
+                    print(e)
             cnt += 1
 
     def blog(self, keyword, quantity=100):
@@ -64,6 +71,7 @@ class NaverSearchApi():
 
 if __name__ == '__main__':
     naver_search_api = NaverSearchApi()
-    r = naver_search_api.image("사당역 족발집", 100)
+    keyword = "치과"
+    r = naver_search_api.image(keyword, 100)
     print(len(r))
-    naver_search_api.save_images(r)
+    naver_search_api.save_images(keyword, r)
